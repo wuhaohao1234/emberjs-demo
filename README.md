@@ -3,55 +3,146 @@
 This README outlines the details of collaborating on this Ember application.
 A short introduction of this app could easily go here.
 
-## Prerequisites
+## install ember-cli
 
-You will need the following things properly installed on your computer.
+```sh
+npm install -g ember-cli
+```
 
-* [Git](https://git-scm.com/)
-* [Node.js](https://nodejs.org/) (with npm)
-* [Ember CLI](https://ember-cli.com/)
-* [Google Chrome](https://google.com/chrome/)
+## create a new app
 
-## Installation
+```sh
+ember new ember-demo
+```
 
-* `git clone <repository-url>` this repository
-* `cd ember-demo`
-* `npm install`
+## write somm html in a template
 
-## Running / Development
+in app/template/applaction.hbs
 
-* `ember serve`
-* Visit your app at [http://localhost:4200](http://localhost:4200).
-* Visit your tests at [http://localhost:4200/tests](http://localhost:4200/tests).
+```html
+<h1>hello world</h1>
 
-### Code Generators
+{{outlet}}
+```
 
-Make use of the many generators for code, try `ember help generate` for more details
+## define route
 
-### Running Tests
+```shell
+ember generagte route scientists
+```
 
-* `ember test`
-* `ember test --server`
+edit app/template/scientists.hbs
 
-### Linting
+```html
+<h2>List of Scientists</h2>
+```
 
-* `npm run lint:hbs`
-* `npm run lint:js`
-* `npm run lint:js -- --fix`
+in browser open http://loalhost:4200/scientists
 
-### Building
+edit app/template/scientists.js
 
-* `ember build` (development)
-* `ember build --environment production` (production)
+```js
+import Route from "@ember/routing/route";
 
-### Deploying
+export default class ScientistsRoute extends Route {
+  model() {
+    return ["Marie Curie", "Mae Jemison", "Albert Hofmann"];
+  }
+}
 
-Specify what it takes to deploy your app.
+```
 
-## Further Reading / Useful Links
+edit app/template/scientists.hbs
 
-* [ember.js](https://emberjs.com/)
-* [ember-cli](https://ember-cli.com/)
-* Development Browser Extensions
-  * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
-  * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
+```html
+<h2>List of Scientists</h2>
+
+<ul>
+  {{#each @model as |scientist|}}
+    <li>{{scientist}}</li>
+  {{/each}}
+</ul>
+```
+
+## create component people-list
+
+```sh
+ember generate component people-list
+```
+
+edit app/components/people-list.hbs
+
+```html
+<h2>{{@title}}</h2>
+
+<ul>
+  {{#each @people as |person|}}
+    <li>{{person}}</li>
+  {{/each}}
+</ul>
+```
+
+scientists use people-list
+
+edit app/template/scientists.hbs
+```html
+{{!-- <h2>Scientists</h2>
+<ul>
+  {{#each @model as |scientist|}}
+    <li>{{scientist}}</li>
+  {{/each}}
+</ul> --}}
+<PeopleList 
+  @title="people"
+  @people={{@model}}
+/>
+{{outlet}}
+```
+
+edit app/components/people-list.hbs
+
+```html
+<h2>{{@title}}</h2>
+
+<ul>
+  {{#each @people as |person|}}
+    <li>
+      <button type="button">{{person}}</button>
+    </li>
+  {{/each}}
+</ul>
+```
+
+edit app/components/people-list.js
+
+```js
+import Component from '@glimmer/component';
+import { action } from '@ember/object';
+
+export default class PeopleListComponent extends Component {
+  @action
+  showPerson(person) {
+    alert(`The person's name is ${person}!`);
+  }
+}
+```
+
+edit app/components/people-list.hbs
+
+```html
+<h2>{{@title}}</h2>
+
+<ul>
+  {{#each @people as |person|}}
+    <li>
+      <button type="button" {{on 'click' (fn this.showPerson person)}}>{{person}}</button>
+    </li>
+  {{/each}}
+</ul>
+```
+
+## build production
+
+```shell
+ember build --environment=production
+```
